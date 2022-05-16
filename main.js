@@ -8,17 +8,24 @@ const carContext = carCanvas.getContext("2d");
 const networkContext = networkCanvas.getContext("2d");
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
-const N = 100;
+const N = 1000;
 const cars = generateCars(N);
 let bestCar = cars[0];
 
 if (localStorage.getItem("bestBrain")) {
-  bestCar.brain = JSON.parse(localStorage.getItem("bestBrain"));
+  for (let i = 0; i < cars.length; i++) {
+    cars[i].brain = JSON.parse(localStorage.getItem("bestBrain"));
+    if (i != 0) {
+      NeuralNetwork.mutate(cars[i].brain, 0.9);
+    }
+  }
 }
 
 
 const traffic = [
-  new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2)
+  new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2),
+  new Car(road.getLaneCenter(0), -500, 30, 50, "DUMMY", 2),
+  new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 2)
 ]
 
 animate();
@@ -47,6 +54,12 @@ function animate(time) {
     cars[i].update(road.borders, traffic);
   }
 
+  /*
+   Todo add better fitness function
+   - in case of turn y is not good fitness
+   - add a func which make sure car is in center
+   - don't allow car to sway unnecessary
+  */
   bestCar = cars.find(
     car => car.y == Math.min(
       ...cars.map(
