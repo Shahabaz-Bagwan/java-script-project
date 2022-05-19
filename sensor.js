@@ -1,9 +1,19 @@
 class Sensor {
   constructor(car) {
     this.car = car;
-    this.rayCount = 5;
     this.rayLength = 150;
-    this.raySpread = Math.PI / 2;
+
+    if (localStorage.getItem("rays")) {
+      this.rayCount = localStorage.getItem("rays");
+    } else {
+      this.rayCount = 6;
+    }
+
+    if (localStorage.getItem("Angle")) {
+      this.raySpread = (Math.PI / 180) * localStorage.getItem("Angle");
+    } else {
+      this.raySpread = Math.PI / 2;
+    }
 
     this.rays = [];
     this.readings = [];

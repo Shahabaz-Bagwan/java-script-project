@@ -8,20 +8,30 @@ const carContext = carCanvas.getContext("2d");
 const networkContext = networkCanvas.getContext("2d");
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
-const N = 100;
+let N = 1;
+if (localStorage.getItem("carCount")) {
+  N = localStorage.getItem("carCount");
+}
 const cars = generateCars(N);
 let bestCar = cars[0];
 
+
+let mutationAmount = 0.3;
+if (localStorage.getItem("mutationAmount")) {
+  mutationAmount = localStorage.getItem("mutationAmount");
+}
 
 if (localStorage.getItem("bestBrain")) {
   for (let i = 0; i < cars.length; i++) {
     cars[i].brain = JSON.parse(localStorage.getItem("bestBrain"));
     if (i != 0) {
-      NeuralNetwork.mutate(cars[i].brain, 0.1);
+      NeuralNetwork.mutate(cars[i].brain, mutationAmount);
     }
   }
 }
-const traffic = [
+const trafficN = 5;
+let traffic = [];
+traffic = [
   new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2, getRandomColor()),
   new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY", 2, getRandomColor()),
   new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 2, getRandomColor()),
@@ -30,6 +40,24 @@ const traffic = [
   new Car(road.getLaneCenter(1), -700, 30, 50, "DUMMY", 2, getRandomColor()),
   new Car(road.getLaneCenter(2), -700, 30, 50, "DUMMY", 2, getRandomColor()),
 ];
+const RandomCarsCheckbox = document.querySelector('#randomCars');
+
+RandomCarsCheckbox.addEventListener('change', () => {
+  if (RandomCarsCheckbox.checked) {
+    traffic = [];
+    for (let i = 0; i < trafficN; i++) {
+      traffic.push(
+        new Car(road.getLaneCenter(Math.floor(Math.random() * 3)),
+          Math.random() * 500, 30, 50, "DUMMY", 2, getRandomColor())
+      );
+
+      traffic.push(new Car(road.getLaneCenter(Math.floor(Math.random() * 3)),
+        -Math.random() * 300, 30, 50, "DUMMY", 2, getRandomColor())
+      );
+    }
+  }
+});
+
 
 animate();
 
