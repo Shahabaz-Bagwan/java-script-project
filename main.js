@@ -72,6 +72,7 @@ function discard() {
 function generateCars(N) {
   const cars = [];
   for (let i = 0; i < N; i++) {
+    // change from AI to KEYS to use the keyboard
     cars.push(new Car(road.getLaneCenter(1), 200, 30, 50, "AI"));
   }
   return cars;
